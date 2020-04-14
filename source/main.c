@@ -13,6 +13,7 @@
 #endif
 
 int main(void) {
+   
     /* Insert DDR and PORT initializations */
     DDRA = 0x00; PORTA = 0xFF; // configure port A's 8 pins as inputs
     DDRB = 0x00; PORTB = 0xFF; // configure port B's 8 pins as inputs
