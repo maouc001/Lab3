@@ -22,10 +22,17 @@ int main(void) {
 
     unsigned char level;       // holds the fuel tank level input from port A
     unsigned char LED;         // holds the LED's to rpresent the fuel level
+    unsigned char seatBelt;    // holds 1 if seat belt is fastened. 0 otherwise
+    unsigned char driver;      // holds 1 if driver is seated in the driver's seat. 0 otherwise 
+    unsigned char key;         // holds 1 if key is on the ignition. 0 otherwise
 
     while (1) {
 
-        level = PINA & 0x0F ;                           // get input level from port A[3,0]
+        level    = PINA & 0x0F ;	// get input level from port A[3,0]
+	key      = PINA & 0x10 ;        // A & 0001 0000
+        driver   = PINA & 0x20 ;        // A & 0010 0000
+	seatBelt = PINA & 0x40 ;        // A & 0100 0000
+	
 
         if ( level == 0x01 || level == 0x02 ) {                         // level 1 or 2
                 LED = 0x60;                                             // LED 5, 0110 0000
@@ -48,9 +55,15 @@ int main(void) {
         else {                                                          // level 0
                 LED = 0x40;                                             // LED 6, 0100 0000
         }
-
-        PORTC = LED;                                                    // output LED to port C
-
+        
+	// set LED[7] 
+	if ( key && driver && ( seatBelt == 0 ) ) {
+		LED = ( LED | 0x80 ) ;		// set LED[7] = 1;    	
+	} else {
+		LED = ( LED & 0x7F ) ;		// set LED[7] = 0; 
+	}
+	
+        PORTC = LED;                            // output LED to port C
     }
     return 1;
 }
